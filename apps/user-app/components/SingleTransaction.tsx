@@ -16,22 +16,14 @@ export async function SingleTransaction({
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
 
-    const sent = userId === fromUserId;
-    const recieved = userId === toUserId;
-
-    if(sent) {
+    const sent = userId == fromUserId;
+ 
         return (
-            <div className="p-4 border rounded-xl border-gray-00 bg-gray-200 ">
-            <span className="text-red-500">- {amount}</span>
+            <div className={`p-4 flex items-center justify-center gap-2 border rounded-xl border-gray-00 bg-gray-200  ${sent ? `border-red-400` : `border-green-400`}`}>
+            <span className={`${sent ? `text-red-500` : `text-green-500`}`}>{sent?<>- </>: <>+ </>} {amount}</span>
             <span>{toUserId}</span>
             <span>{timeStamp.toDateString()}</span>
         </div> 
         )
-    }
     
-    return <div className="w-[350px] p-4 border rounded-xl border-gray-400 bg-gray-200 flex justify-around ">
-        <span className="text-green-500 font-bold">+ {amount}</span>
-        <span>from {fromUserId}</span>
-        <span className="text-gray-500">{timeStamp.toLocaleTimeString()}</span>
-    </div>
 }

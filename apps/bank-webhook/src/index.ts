@@ -1,5 +1,5 @@
 import express from "express";
-import db from "@repo/db/client";
+import db from "../../../packages/db/src";
 const app = express();
 
 app.use(express.json())
@@ -10,14 +10,30 @@ app.post("/hdfcWebhook", async (req, res) => {
     const paymentInformation: {
         token: string;
         userId: string;
-        amount: string
     } = {
         token: req.body.token,
         userId: req.body.user_identifier,
-        amount: req.body.amount
     };
 
-    try {
+
+
+    try {   
+        const userBalance = await db.balance.findFirst({
+            where: {
+                userId: Number(paymentInformation.userId)
+            },
+        })
+
+        const balanceId = userBalance?.id;
+        
+        const transaction = await db.onRampTransaction.findFirst({
+            where: {
+              token: paymentInformation.token
+            },
+          });
+
+          const amount = transaction?.amount;
+
         await db.$transaction([
             db.balance.updateMany({
                 where: {
@@ -25,8 +41,8 @@ app.post("/hdfcWebhook", async (req, res) => {
                 },
                 data: {
                     amount: {
-                        // You can also get this from your DB
-                        increment: Number(paymentInformation.amount)
+                        
+                        increment: Number(amount)
                     }
                 }
             }),
@@ -40,8 +56,8 @@ app.post("/hdfcWebhook", async (req, res) => {
             })
         ]);
 
-        res.json({
-            message: "Captured"
+        res.json({         
+            msg: "Captured"
         })
     } catch(e) {
         console.error(e);
@@ -52,4 +68,7 @@ app.post("/hdfcWebhook", async (req, res) => {
 
 })
 
-app.listen(3005);
+app.listen(3005, () => {
+    console.log("bank webhook is listening on 3005");
+    
+});

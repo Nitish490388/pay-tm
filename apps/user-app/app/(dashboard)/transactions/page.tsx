@@ -30,6 +30,7 @@ export  default async function() {
      const data = await getP2pTransaction();
     
     return <div className=" w-full h-full flex flex-col items-center overflow-y-auto space-y-3 m-5">
+        
         {
             data.map((item, i) => (
                 <SingleTransaction amount={item.amount} timeStamp={item.timeStamp} toUserId={item.toUserId} fromUserId={item.fromUserId}/>

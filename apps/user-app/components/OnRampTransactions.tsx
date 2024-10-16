@@ -6,7 +6,7 @@ export const OnRampTransactions = ({
     transactions: {
         time: Date,
         amount: number,
-        // TODO: Can the type of `status` be more specific?
+      
         status: string,
         provider: string
     }[]
@@ -29,8 +29,24 @@ export const OnRampTransactions = ({
                         {t.time.toDateString()}
                     </div>
                 </div>
-                <div className="flex flex-col justify-center">
+                <div className="flex flex-col justify-center items-center">
                     + Rs {t.amount / 100}
+                    <div className="text-slate-600 text-xs">
+                        {
+                            t.status === "Processing" ? 
+                            <div className="text-orange-400">
+                                Processing
+                            </div> : t.status === "Failure" ? 
+                            <div className="text-red-700">
+                            Failure
+                        </div>
+                            : 
+
+                            <div className="text-green-600">
+                            Success
+                        </div>
+                        }
+                    </div>
                 </div>
 
             </div>)}
